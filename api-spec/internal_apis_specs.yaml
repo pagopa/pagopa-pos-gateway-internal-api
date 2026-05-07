@@ -4,7 +4,7 @@ info:
   description: API's that will be used for pagoPA POS flow integration
   contact:
     name: pagoPA - Touchpoints team
-  version: 0.0.1
+  version: 1.0.0
 servers:
   - url: 'https://{host}/pos-layer-service'
     variables:
@@ -445,10 +445,10 @@ components:
     TransactionId:
       type: string
       format: uuid
-      description: unique identifier of the pagoPA notice payment transaction
+      description: unique identifier of the pagoPA eCommerce payment transaction
     SessionId:
       type: string
-      description: unique identifier of the pagoPA notice payment session
+      description: unique identifier of the pagoPA POS gateway payment session
     RRN:
       type: string
       examples: 
