@@ -24,7 +24,7 @@ externalDocs:
   url: >-
     https://pagopa.atlassian.net/wiki/spaces/I/pages/2813689945/DR+PFM-1+-+Vista+Dinamica+delle+Componenti
   description: Design review
-security: 
+security:
   - PagopaInternalApiKeyAuth: []
 paths:
   /createDebtPosition:
@@ -59,19 +59,19 @@ paths:
                 $ref: '#/components/schemas/ProblemJson'
         '401':
           description: Unauthorized
-        '404':    
+        '404':
           description: Not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemJson'
-        '409':        
+        '409':
           description: Conflict
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemJson'
-        '429':    
+        '429':
           description: Too many requests
           content:
             application/json:
@@ -120,7 +120,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ActivatePaymentRequest'
-           
+
       responses:
         '200':
           description: Payment activated successfully
@@ -136,13 +136,13 @@ paths:
                 $ref: '#/components/schemas/ProblemJson'
         '401':
           description: Unauthorized
-        '404':    
+        '404':
           description: Not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemJson'
-        '429':    
+        '429':
           description: Too many requests
           content:
             application/json:
@@ -202,13 +202,13 @@ paths:
                 $ref: '#/components/schemas/ProblemJson'
         '401':
           description: Unauthorized
-        '404':    
+        '404':
           description: Not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemJson'
-        '429':    
+        '429':
           description: Too many requests
           content:
             application/json:
@@ -241,58 +241,58 @@ paths:
   /psps/{idPsp}/fees:
     post:
       tags:
-      - pagopa-internal
+        - pagopa-internal
       summary: GET with request body - No resource will be created. Get taxpayer fees of all or specified idPSP with CIs contributions
       operationId: retrieveFees
-      description: retrieve taxpayer fees 
+      description: retrieve taxpayer fees
       security:
-      - PagopaInternalApiKeyAuth: []
+        - PagopaInternalApiKeyAuth: []
       parameters:
-      - name: idPsp
-        in: path
-        description: PSP identifier
-        required: true
-        schema:
-          $ref: '#/components/schemas/PspInfo/properties/id'
-      - name: maxOccurrences
-        in: query
-        required: false
-        description: max occurrences to be returned
-        schema:
-          $ref: '#/components/schemas/MaxOccurrences'
-      - name: allCcp
-        in: query
-        description: 'Flag for the exclusion of Poste bundles: false -> excluded,
+        - name: idPsp
+          in: path
+          description: PSP identifier
+          required: true
+          schema:
+            $ref: '#/components/schemas/PspInfo/properties/id'
+        - name: maxOccurrences
+          in: query
+          required: false
+          description: max occurrences to be returned
+          schema:
+            $ref: '#/components/schemas/MaxOccurrences'
+        - name: allCcp
+          in: query
+          description: 'Flag for the exclusion of Poste bundles: false -> excluded,
           true or null -> included'
-        required: false
-        schema:
-          $ref: '#/components/schemas/BooleanFlag'
-      - name: onUsFirst
-        in: query
-        description: "Affects the sorting logic [default = true]. true -> if
+          required: false
+          schema:
+            $ref: '#/components/schemas/BooleanFlag'
+        - name: onUsFirst
+          in: query
+          description: "Affects the sorting logic [default = true]. true -> if
           the onus bundle is present, it is returned in the first position, regardless
           of the chosen sorting logic. false -> the sorting logic is also applied
           to the onus bundle, which may therefore appear in positions other than the
           first"
-        required: false
-        schema:
-          $ref: '#/components/schemas/BooleanFlag'
-      - name: orderBy
-        in: query
-        description: "Sorting logic to be applied to the bundles [default = RANDOM].
+          required: false
+          schema:
+            $ref: '#/components/schemas/BooleanFlag'
+        - name: orderBy
+          in: query
+          description: "Sorting logic to be applied to the bundles [default = RANDOM].
           random -> bundles are sorted randomly. fee -> sorted by increasing
           fee, if fees are equal then by PSP name. pspname -> sorted by PSP
           name.feerandom: sorted by increasing fee, if fees are equal then randomly."
-        required: false
-        schema:
-          type: string
-          default: random
-      - name: X-Request-Id
-        in: header
-        description: This header identifies the call, if not passed it is self-generated.
-          This ID is returned in the response.
-        schema:
-          type: string
+          required: false
+          schema:
+            type: string
+            default: random
+        - name: X-Request-Id
+          in: header
+          description: This header identifies the call, if not passed it is self-generated.
+            This ID is returned in the response.
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -426,15 +426,8 @@ components:
       description: The unique transaction identifier
       schema:
         $ref: '#/components/schemas/TransactionId'
-    SessionIdPath:
-      name: sessionId
-      in: path
-      required: true
-      description: The unique session identifier
-      schema:
-        $ref: '#/components/schemas/SessionId'
   schemas:
-    Amount: 
+    Amount:
       minimum: 1
       type: integer
       description: Amount expressed in eurocents
@@ -449,28 +442,29 @@ components:
     SessionId:
       type: string
       description: unique identifier of the pagoPA POS gateway payment session
+      format: uuid
     RRN:
       type: string
-      examples: 
+      examples:
         - '123456789012'
       description: Retrieval Reference Number -> payment unique identifier
     Bin:
       type: string
-      examples: 
+      examples:
         - "400000"
       minLength: 6
       maxLength: 8
       description: debit/credit card bin number, used to print receipts
     LastFourDigits:
       type: string
-      examples: 
+      examples:
         - "1234"
       minLength: 4
       maxLength: 4
       description: debit/credit card last four digits number, used to print receipts
     PaymentAuthCode:
       type: string
-      examples: 
+      examples:
         - '889900'
       description: payment authorization code. PSP side identifier that can be used to track back to POS authorization process
     PosTerminalStatus:
@@ -495,7 +489,7 @@ components:
         - REFUSED
         - CANCELED_BY_USER
         - TIMEOUT
-      examples: 
+      examples:
         - AUTHORIZED
       description: authorization outcome
     CardBrand:
@@ -515,14 +509,14 @@ components:
         - ERROR_TERMINAL_UNREACHABLE
     RptId:
       type: string
-      examples: 
+      examples:
         - "80001230456302000100000012345"
       description: 'uniquely identify a payment notice. valued as <creditorInstitutionFiscalCode><noticeNumber>'
     PaymentToken:
       type: string
-      examples: 
+      examples:
         - '99887766554433221100'
-    
+
     AuthorizationOutcomeResponse:
       type: object
       required:
@@ -536,7 +530,7 @@ components:
         timestamp:
           type: string
           format: date-time
-          examples: 
+          examples:
             - '2026-04-08T14:16:30Z'
           description: authorization timestamp
         amount:
@@ -552,7 +546,6 @@ components:
         - timestamp
         - amount
         - details
-        - sessionId
       properties:
         outcome:
           $ref: '#/components/schemas/AuthorizationOutcome'
@@ -561,21 +554,19 @@ components:
         timestamp:
           type: string
           format: date-time
-          examples: 
+          examples:
             - '2026-04-08T14:16:30Z'
           description: authorization timestamp
         amount:
           $ref: '#/components/schemas/Amount'
         details:
           $ref: '#/components/schemas/AuthorizationCallbackDetails'
-        sessionId:
-          $ref: '#/components/schemas/SessionId'
     AuthorizationCallbackDetails:
       type: object
       oneOf:
         - $ref: '#/components/schemas/AuthorizationCallbackDetailsOk'
         - $ref: '#/components/schemas/AuthorizationCallbackDetailsKo'
-      discriminator: 
+      discriminator:
         propertyName: outcome
         mapping:
           AUTHORIZED: '#/components/schemas/AuthorizationCallbackDetailsOk'
@@ -592,7 +583,7 @@ components:
       properties:
         paymentType:
           type: string
-          enum: 
+          enum:
             - CARD
         details:
           type: object
@@ -655,7 +646,7 @@ components:
           $ref: '#/components/schemas/PosAuthorizationErrorOutcome'
     PosRequest:
       type: object
-      description: Request to inquiry for 
+      description: Request to inquiry for
       required:
         - psp
         - creditorInstitution
@@ -668,27 +659,27 @@ components:
       type: object
       description: CI informations
       required:
-          - fiscalCode
+        - fiscalCode
       properties:
         fiscalCode:
           maxLength: 11
           minLength: 11
           type: string
-          examples: 
+          examples:
             - '80001230456'
           description: CI identifier (such as fiscalCode)
         logicalOffice:
           maxLength: 140
           minLength: 0
           type: string
-          examples: 
+          examples:
             - "ANAGRAFE"
           description: "Logical office id that want to initialize the payment"
         workstation:
           maxLength: 50
           minLength: 0
           type: string
-          examples: 
+          examples:
             - "SPORTELLO_02"
           description: "Identifier of the workstatio that want to initialize the payment"
     PspInfo:
@@ -701,19 +692,19 @@ components:
       properties:
         id:
           type: string
-          examples: 
+          examples:
             - "PSP_001"
           description: the psp unique identifier
         broker:
           type: string
-          examples: 
+          examples:
             - "INT_123"
-          description: the psp broker code 
+          description: the psp broker code
         channel:
           type: string
-          examples: 
+          examples:
             - "CANALE_POS"
-          description: the psp channel code 
+          description: the psp channel code
     PosResponse:
       type: object
       properties:
@@ -735,7 +726,7 @@ components:
           $ref: '#/components/schemas/TerminalId'
         description:
           type: string
-          examples: 
+          examples:
             - "POS Sportello 02 - Main"
           description: An human readable POS terminal description
         status:
@@ -768,14 +759,14 @@ components:
           maxLength: 11
           minLength: 11
           type: string
-          examples: 
+          examples:
             - '80001230456'
         name:
           maxLength: 140
           minLength: 0
           type: string
-          examples: 
-             - "Comune di Test"
+          examples:
+            - "Comune di Test"
     DebtPosition:
       type: object
       required:
@@ -800,14 +791,14 @@ components:
           maxLength: 140
           minLength: 0
           type: string
-          examples: 
-             - "Pagamento di Prova"
-        iban: 
+          examples:
+            - "Pagamento di Prova"
+        iban:
           maxLength: 35
           minLength: 1
           pattern: ^[A-Za-z0-9]{1,35}$
           type: string
-          examples: 
+          examples:
             - "IT0000000000000000000000000"
         category:
           type: string
@@ -820,7 +811,7 @@ components:
       properties:
         type:
           type: string
-          enum: 
+          enum:
             - G
             - F
           description: debtor type. F -> physical person, G -> legal entity
@@ -828,44 +819,44 @@ components:
           maxLength: 16
           minLength: 11
           type: string
-          examples: 
+          examples:
             - "ROSMRI87A04H501K"
           description: debtor fiscal code
         fullName:
           maxLength: 140
           minLength: 0
           type: string
-          examples: 
+          examples:
             - "Mario Rossi"
           description: debtor full name
     SessionResponse:
       type: object
-      required: 
+      required:
         - outcome
       properties:
         outcome:
-            type: string
-            enum:
-              - SUCCESS
-              - ERROR
-              - ONGOING
+          type: string
+          enum:
+            - SUCCESS
+            - ERROR
+            - ONGOING
         transactionId:
           $ref: '#/components/schemas/TransactionId'
         creditorInstitutionFiscalCode:
           type: string
           minLength: 11
           maxLength: 11
-          examples: 
+          examples:
             - '80001230456'
         noticeNumber:
           type: string
-          examples: 
+          examples:
             - '302000100000012345'
           minLength: 18
           maxLength: 18
         iuv:
           type: string
-          examples: 
+          examples:
             - '02000100000012345'
           minLength: 17
           maxLength: 17
@@ -878,10 +869,10 @@ components:
         - details
       properties:
         outcome:
-            type: string
-            enum:
-              - OK
-              - KO
+          type: string
+          enum:
+            - OK
+            - KO
         details:
           $ref: '#/components/schemas/PaymentResponseDetails'
     PaymentResponseDetails:
@@ -889,12 +880,12 @@ components:
       oneOf:
         - $ref: '#/components/schemas/OkPaymentResponseDetails'
         - $ref: '#/components/schemas/KoPaymentResponseDetails'
-      discriminator: 
+      discriminator:
         propertyName: outcome
         mapping:
           OK: '#/components/schemas/OkPaymentResponseDetails'
           KO: '#/components/schemas/KoPaymentResponseDetails'
-      
+
 
     OkPaymentResponseDetails:
       type: object
@@ -909,17 +900,17 @@ components:
           type: string
           minLength: 11
           maxLength: 11
-          examples: 
+          examples:
             - '80001230456'
         noticeNumber:
           type: string
-          examples: 
+          examples:
             - '302000100000012345'
           minLength: 18
           maxLength: 18
         iuv:
           type: string
-          examples: 
+          examples:
             - '02000100000012345'
           minLength: 17
           maxLength: 17
@@ -943,17 +934,17 @@ components:
           maxLength: 140
           minLength: 0
           type: string
-          examples: 
+          examples:
             - "Comune di Fantasia"
         iupd:
           type: string
-          examples: 
-             - "IUPD-2024-XYZ-001"
+          examples:
+            - "IUPD-2024-XYZ-001"
         officeName:
           maxLength: 140
           minLength: 0
           type: string
-          examples: 
+          examples:
             - "Ufficio Anagrafe"
         switchToExpired:
           type: boolean
@@ -984,14 +975,14 @@ components:
           minLength: 0
           type: string
           description: remittance information following EACT standard as /RFB/{iuv}/CNR/{userFiscalCode}/TXT/{TransferDescription})
-          examples: 
+          examples:
             - "/RFB/00000000000000000/CNR/AAAAAAAAAAAAAAAA/TXT/The payment description"
-        iban: 
+        iban:
           maxLength: 35
           minLength: 1
           pattern: ^[A-Za-z0-9]{1,35}$
           type: string
-          examples: 
+          examples:
             - "IT0000000000000000000000000"
         category:
           type: string
@@ -1015,19 +1006,19 @@ components:
             $ref: '#/components/schemas/TransferItem'
         iuv:
           type: string
-          examples: 
+          examples:
             - '020001000000123456'
         description:
           maxLength: 140
           minLength: 0
           type: string
           description: payment description
-          examples: 
+          examples:
             - "Tassa Rifiuti 2024"
         dueDate:
           type: string
           format: date-time
-          examples: 
+          examples:
             - '2024-12-31T23:59:59Z'
         installmentMetadata:
           type: object
@@ -1038,15 +1029,18 @@ components:
       properties:
         idDeptPosition:
           type: string
-          examples: 
+          examples:
             - "GPD-ID-99887766"
     ActivatePaymentRequest:
       type: object
       required:
         - paymentNotice
+        - sessionId
       properties:
         paymentNotice:
           $ref: '#/components/schemas/PaymentNoticeActivation'
+        sessionId:
+          $ref: '#/components/schemas/SessionId'
     PaymentNoticeActivation:
       type: object
       required:
@@ -1079,7 +1073,7 @@ components:
             it SHOULD provide human-readable documentation for the problem type
             (e.g., using HTML).
           default: 'about:blank'
-          examples: 
+          examples:
             - 'https://example.com/problem/constraint-violation'
         title:
           type: string
@@ -1097,7 +1091,7 @@ components:
           description: |-
             A human readable explanation specific to this occurrence of the
             problem.
-          examples: 
+          examples:
             - "There was an error processing the request"
         instance:
           type: string
@@ -1115,13 +1109,13 @@ components:
         of the problem.
       minimum: 100
       exclusiveMaximum: 600
-      examples: 
+      examples:
         - 200
     PaymentNoticeItem:
       required:
-      - paymentAmount
-      - primaryCreditorInstitution
-      - transferList
+        - paymentAmount
+        - primaryCreditorInstitution
+        - transferList
       type: object
       properties:
         paymentAmount:
@@ -1136,7 +1130,7 @@ components:
             "$ref": "#/components/schemas/TransferListItem"
     TransferListItem:
       required:
-      - creditorInstitution
+        - creditorInstitution
       type: object
       properties:
         creditorInstitution:
@@ -1169,7 +1163,7 @@ components:
           format: int64
     Transfer:
       required:
-      - fees
+        - fees
       type: object
       properties:
         taxPayerFee:
@@ -1210,7 +1204,7 @@ components:
             "$ref": "#/components/schemas/Fee"
     PaymentOptionByPspMulti:
       required:
-      - paymentNotice
+        - paymentNotice
       type: object
       properties:
         bin:
