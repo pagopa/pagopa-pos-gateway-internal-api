@@ -1,0 +1,1238 @@
+openapi: 3.1.0
+info:
+  title: Pagopa POS gateway services for POS integration
+  description: API's that will be used for pagoPA POS flow integration
+  contact:
+    name: pagoPA - Touchpoints team
+  version: 1.0.0
+servers:
+  - url: 'https://{host}/pos-layer-service'
+    variables:
+      host:
+        description: The hostname of the API server
+        default: api.platform.pagopa.it
+        enum:
+          - api.platform.pagopa.it
+          - api.dev.platform.pagopa.it
+          - api.uat.platform.pagopa.it
+tags:
+  - name: pagopa-internal
+    description: >-
+      APIs that will be implemented/exposed by pagoPA internal services to
+      handle payment position creation, payment and reporting
+externalDocs:
+  url: >-
+    https://pagopa.atlassian.net/wiki/spaces/I/pages/2813689945/DR+PFM-1+-+Vista+Dinamica+delle+Componenti
+  description: Design review
+security:
+  - PagopaInternalApiKeyAuth: []
+paths:
+  /createDebtPosition:
+    post:
+      tags:
+        - pagopa-internal
+      summary: Create a new debt position
+      security:
+        - PagopaInternalApiKeyAuth: []
+      description: Trigger a position creation invoking external service
+      operationId: createDebtPosition
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DebtPositionRequest'
+      responses:
+        '200':
+          description: Debt position created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DebtPositionResponse'
+        '400':
+          description: Formally invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '502':
+          description: Bad gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '504':
+          description: Gateway timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+  /transactions:
+    post:
+      tags:
+        - pagopa-internal
+      summary: Create a new pagoPA payment notice transaction
+      security:
+        - PagopaInternalApiKeyAuth: []
+      description: >-
+        Activate a transaction getting all info from Nodo. Return and identifier
+        of the transaction.
+      operationId: newTransaction
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivatePaymentRequest'
+
+      responses:
+        '200':
+          description: Payment activated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivatePaymentResponse'
+        '400':
+          description: Formally invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '502':
+          description: Bad gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '504':
+          description: Gateway timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+  /transactions/{transactionId}/authorizations/outcomes:
+    post:
+      tags:
+        - pagopa-internal
+      summary: Notify authorization outcome to pagoPA layer (eCommerce)
+      security:
+        - PagopaInternalApiKeyAuth: []
+      description: >-
+        Return to eCommerce authorization outcome
+      operationId: notifyAuthorizationOutcome
+      parameters:
+        - $ref: '#/components/parameters/TransactionIdPath'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorizationCallbackRequest'
+      responses:
+        '204':
+          description: Outcome notified successfully
+        '400':
+          description: Formally invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '502':
+          description: Bad gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '504':
+          description: Gateway timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+  /psps/{idPsp}/fees:
+    post:
+      tags:
+        - pagopa-internal
+      summary: GET with request body - No resource will be created. Get taxpayer fees of all or specified idPSP with CIs contributions
+      operationId: retrieveFees
+      description: retrieve taxpayer fees
+      security:
+        - PagopaInternalApiKeyAuth: []
+      parameters:
+        - name: idPsp
+          in: path
+          description: PSP identifier
+          required: true
+          schema:
+            $ref: '#/components/schemas/PspInfo/properties/id'
+        - name: maxOccurrences
+          in: query
+          required: false
+          description: max occurrences to be returned
+          schema:
+            $ref: '#/components/schemas/MaxOccurrences'
+        - name: allCcp
+          in: query
+          description: 'Flag for the exclusion of Poste bundles: false -> excluded,
+          true or null -> included'
+          required: false
+          schema:
+            $ref: '#/components/schemas/BooleanFlag'
+        - name: onUsFirst
+          in: query
+          description: "Affects the sorting logic [default = true]. true -> if
+          the onus bundle is present, it is returned in the first position, regardless
+          of the chosen sorting logic. false -> the sorting logic is also applied
+          to the onus bundle, which may therefore appear in positions other than the
+          first"
+          required: false
+          schema:
+            $ref: '#/components/schemas/BooleanFlag'
+        - name: orderBy
+          in: query
+          description: "Sorting logic to be applied to the bundles [default = RANDOM].
+          random -> bundles are sorted randomly. fee -> sorted by increasing
+          fee, if fees are equal then by PSP name. pspname -> sorted by PSP
+          name.feerandom: sorted by increasing fee, if fees are equal then randomly."
+          required: false
+          schema:
+            type: string
+            default: random
+        - name: X-Request-Id
+          in: header
+          description: This header identifies the call, if not passed it is self-generated.
+            This ID is returned in the response.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PaymentOptionByPspMulti"
+        required: true
+      responses:
+        '200':
+          description: Ok
+          headers:
+            X-Request-Id:
+              description: This header identifies the call
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BundleOption"
+        '400':
+          description: Bad Request
+          headers:
+            X-Request-Id:
+              description: This header identifies the call
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ProblemJson"
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-Id:
+              description: This header identifies the call
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          headers:
+            X-Request-Id:
+              description: This header identifies the call
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ProblemJson"
+        '422':
+          description: Unable to process the request
+          headers:
+            X-Request-Id:
+              description: This header identifies the call
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ProblemJson"
+        '429':
+          description: Too many requests
+          headers:
+            X-Request-Id:
+              description: This header identifies the call
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ProblemJson"
+        '500':
+          description: Internal server error
+          headers:
+            X-Request-Id:
+              description: This header identifies the call
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '502':
+          description: Bad gateway
+          headers:
+            X-Request-Id:
+              description: This header identifies the call
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '503':
+          description: Service unavailable
+          headers:
+            X-Request-Id:
+              description: This header identifies the call
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '504':
+          description: Gateway timeout
+          headers:
+            X-Request-Id:
+              description: This header identifies the call
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+components:
+  parameters:
+    CorrelationId:
+      name: x-correlation-id
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: >-
+        Subsequent api call correlation field. This should be the same for all
+        api's invoked in a given user session to track each call and for
+        throubleshooting
+    TransactionIdPath:
+      name: transactionId
+      in: path
+      required: true
+      description: The unique transaction identifier
+      schema:
+        $ref: '#/components/schemas/TransactionId'
+  schemas:
+    Amount:
+      minimum: 1
+      type: integer
+      description: Amount expressed in eurocents
+      format: int64
+    TerminalId:
+      type: string
+      description: the POS unique terminal identifier
+    TransactionId:
+      type: string
+      format: uuid
+      description: unique identifier of the pagoPA eCommerce payment transaction
+    SessionId:
+      type: string
+      description: unique identifier of the pagoPA POS gateway payment session
+      format: uuid
+    RRN:
+      type: string
+      examples:
+        - '123456789012'
+      description: Retrieval Reference Number -> payment unique identifier
+    Bin:
+      type: string
+      examples:
+        - "400000"
+      minLength: 6
+      maxLength: 8
+      description: debit/credit card bin number, used to print receipts
+    LastFourDigits:
+      type: string
+      examples:
+        - "1234"
+      minLength: 4
+      maxLength: 4
+      description: debit/credit card last four digits number, used to print receipts
+    PaymentAuthCode:
+      type: string
+      examples:
+        - '889900'
+      description: payment authorization code. PSP side identifier that can be used to track back to POS authorization process
+    PosTerminalStatus:
+      type: string
+      description: The POS terminal status
+      enum:
+        - AVAILABLE
+        - UNAVAILABLE
+        - MAINTENANCE
+    PosTerminalStatusCode:
+      type: string
+      description: POS terminal status code related to POS status
+      enum:
+        - S0001
+        - S0002
+        - S0003
+    AuthorizationOutcome:
+      type: string
+      enum:
+        - AUTHORIZED
+        - DECLINED
+        - REFUSED
+        - CANCELED_BY_USER
+        - TIMEOUT
+      examples:
+        - AUTHORIZED
+      description: authorization outcome
+    CardBrand:
+      type: string
+      enum:
+        - VISA
+        - MASTERCARD
+        - DINERS
+        - AMEX
+        - MAESTRO
+      description: the brand of the citized debit/credit card
+    PosAuthorizationErrorOutcome:
+      description: POS authorization error outcome
+      type: string
+      enum:
+        - ERROR_TERMINAL_OFFLINE
+        - ERROR_TERMINAL_UNREACHABLE
+    RptId:
+      type: string
+      examples:
+        - "80001230456302000100000012345"
+      description: 'uniquely identify a payment notice. valued as <creditorInstitutionFiscalCode><noticeNumber>'
+    PaymentToken:
+      type: string
+      examples:
+        - '99887766554433221100'
+
+    AuthorizationOutcomeResponse:
+      type: object
+      required:
+        - terminalId
+        - amount
+      properties:
+        outcome:
+          $ref: '#/components/schemas/AuthorizationOutcome'
+        terminalId:
+          $ref: '#/components/schemas/TerminalId'
+        timestamp:
+          type: string
+          format: date-time
+          examples:
+            - '2026-04-08T14:16:30Z'
+          description: authorization timestamp
+        amount:
+          $ref: '#/components/schemas/Amount'
+        details:
+          $ref: '#/components/schemas/AuthorizationCallbackDetails'
+
+    AuthorizationCallbackRequest:
+      type: object
+      required:
+        - outcome
+        - terminalId
+        - timestamp
+        - amount
+        - details
+      properties:
+        outcome:
+          $ref: '#/components/schemas/AuthorizationOutcome'
+        terminalId:
+          $ref: '#/components/schemas/TerminalId'
+        timestamp:
+          type: string
+          format: date-time
+          examples:
+            - '2026-04-08T14:16:30Z'
+          description: authorization timestamp
+        amount:
+          $ref: '#/components/schemas/Amount'
+        details:
+          $ref: '#/components/schemas/AuthorizationCallbackDetails'
+    AuthorizationCallbackDetails:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/AuthorizationCallbackDetailsOk'
+        - $ref: '#/components/schemas/AuthorizationCallbackDetailsKo'
+      discriminator:
+        propertyName: outcome
+        mapping:
+          AUTHORIZED: '#/components/schemas/AuthorizationCallbackDetailsOk'
+          DECLINED: '#/components/schemas/AuthorizationCallbackDetailsKo'
+          REFUSED: '#/components/schemas/AuthorizationCallbackDetailsKo'
+          CANCELED_BY_USER: '#/components/schemas/AuthorizationCallbackDetailsKo'
+          TIMEOUT: '#/components/schemas/AuthorizationCallbackDetailsKo'
+    AuthorizationCallbackDetailsOk:
+      type: object
+      description: Authorization outcome OK details
+      required:
+        - paymentType
+        - details
+      properties:
+        paymentType:
+          type: string
+          enum:
+            - CARD
+        details:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/AuthorizationCallbackCardDetailsOk'
+      discriminator:
+        propertyName: paymentType
+        mapping:
+          CARD: '#/components/schemas/AuthorizationCallbackCardDetailsOk'
+    AuthorizationCallbackCardDetailsOk:
+      type: object
+      description: Authorization outcome OK details
+      required:
+        - bin
+        - lastFourDigits
+        - paymentAuthCode
+        - rrn
+        - brand
+      properties:
+        bin:
+          $ref: '#/components/schemas/Bin'
+        lastFourDigits:
+          $ref: '#/components/schemas/LastFourDigits'
+        paymentAuthCode:
+          $ref: '#/components/schemas/PaymentAuthCode'
+        rrn:
+          $ref: '#/components/schemas/RRN'
+        brand:
+          $ref: '#/components/schemas/CardBrand'
+    AuthorizationCallbackDetailsKo:
+      type: object
+      required:
+        - errorDescription
+      properties:
+        errorDescription:
+          type: string
+          description: error description
+    AuthorizationRequest:
+      type: object
+      required:
+        - amount
+        - psp
+        - creditorInstitution
+        - terminalId
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        psp:
+          $ref: '#/components/schemas/PspInfo'
+        creditorInstitution:
+          $ref: '#/components/schemas/CreditorInstitutionInfo'
+        terminalId:
+          $ref: '#/components/schemas/TerminalId'
+    AuthorizationErrorResponse:
+      type: object
+      required:
+        - outcome
+      properties:
+        outcome:
+          $ref: '#/components/schemas/PosAuthorizationErrorOutcome'
+    PosRequest:
+      type: object
+      description: Request to inquiry for
+      required:
+        - psp
+        - creditorInstitution
+      properties:
+        psp:
+          $ref: '#/components/schemas/PspInfo'
+        creditorInstitution:
+          $ref: '#/components/schemas/CreditorInstitutionInfo'
+    CreditorInstitutionInfo:
+      type: object
+      description: CI informations
+      required:
+        - fiscalCode
+      properties:
+        fiscalCode:
+          maxLength: 11
+          minLength: 11
+          type: string
+          examples:
+            - '80001230456'
+          description: CI identifier (such as fiscalCode)
+        logicalOffice:
+          maxLength: 140
+          minLength: 0
+          type: string
+          examples:
+            - "ANAGRAFE"
+          description: "Logical office id that want to initialize the payment"
+        workstation:
+          maxLength: 50
+          minLength: 0
+          type: string
+          examples:
+            - "SPORTELLO_02"
+          description: "Identifier of the workstatio that want to initialize the payment"
+    PspInfo:
+      type: object
+      description: PSP informations
+      required:
+        - id
+        - broker
+        - channel
+      properties:
+        id:
+          type: string
+          examples:
+            - "PSP_001"
+          description: the psp unique identifier
+        broker:
+          type: string
+          examples:
+            - "INT_123"
+          description: the psp broker code
+        channel:
+          type: string
+          examples:
+            - "CANALE_POS"
+          description: the psp channel code
+    PosResponse:
+      type: object
+      properties:
+        terminals:
+          type: array
+          items:
+            $ref: '#/components/schemas/PosTerminal'
+          minItems: 1
+      required:
+        - terminals
+    PosTerminal:
+      type: object
+      required:
+        - id
+        - description
+        - status
+      properties:
+        id:
+          $ref: '#/components/schemas/TerminalId'
+        description:
+          type: string
+          examples:
+            - "POS Sportello 02 - Main"
+          description: An human readable POS terminal description
+        status:
+          $ref: '#/components/schemas/PosTerminalStatus'
+        statusCode:
+          $ref: '#/components/schemas/PosTerminalStatusCode'
+    PaymentRequest:
+      type: object
+      required:
+        - terminalId
+        - psp
+        - creditorInstitution
+        - debtPosition
+      properties:
+        terminalId:
+          $ref: '#/components/schemas/TerminalId'
+        psp:
+          $ref: '#/components/schemas/PspInfo'
+        creditorInstitution:
+          $ref: '#/components/schemas/CreditorInstitution'
+        debtPosition:
+          $ref: '#/components/schemas/DebtPosition'
+    CreditorInstitution:
+      type: object
+      required:
+        - fiscalCode
+        - name
+      properties:
+        fiscalCode:
+          maxLength: 11
+          minLength: 11
+          type: string
+          examples:
+            - '80001230456'
+        name:
+          maxLength: 140
+          minLength: 0
+          type: string
+          examples:
+            - "Comune di Test"
+    DebtPosition:
+      type: object
+      required:
+        - transfer
+        - debtor
+      properties:
+        transfer:
+          $ref: '#/components/schemas/DebtPositionTransfer'
+        debtor:
+          $ref: '#/components/schemas/Debtor'
+    DebtPositionTransfer:
+      type: object
+      required:
+        - amount
+        - remittanceInformation
+        - iban
+        - category
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        remittanceInformation:
+          maxLength: 140
+          minLength: 0
+          type: string
+          examples:
+            - "Pagamento di Prova"
+        iban:
+          maxLength: 35
+          minLength: 1
+          pattern: ^[A-Za-z0-9]{1,35}$
+          type: string
+          examples:
+            - "IT0000000000000000000000000"
+        category:
+          type: string
+    Debtor:
+      type: object
+      required:
+        - type
+        - fiscalCode
+        - fullName
+      properties:
+        type:
+          type: string
+          enum:
+            - G
+            - F
+          description: debtor type. F -> physical person, G -> legal entity
+        fiscalCode:
+          maxLength: 16
+          minLength: 11
+          type: string
+          examples:
+            - "ROSMRI87A04H501K"
+          description: debtor fiscal code
+        fullName:
+          maxLength: 140
+          minLength: 0
+          type: string
+          examples:
+            - "Mario Rossi"
+          description: debtor full name
+    SessionResponse:
+      type: object
+      required:
+        - outcome
+      properties:
+        outcome:
+          type: string
+          enum:
+            - SUCCESS
+            - ERROR
+            - ONGOING
+        transactionId:
+          $ref: '#/components/schemas/TransactionId'
+        creditorInstitutionFiscalCode:
+          type: string
+          minLength: 11
+          maxLength: 11
+          examples:
+            - '80001230456'
+        noticeNumber:
+          type: string
+          examples:
+            - '302000100000012345'
+          minLength: 18
+          maxLength: 18
+        iuv:
+          type: string
+          examples:
+            - '02000100000012345'
+          minLength: 17
+          maxLength: 17
+        authorization:
+          $ref: '#/components/schemas/AuthorizationOutcomeResponse'
+    PaymentResponse:
+      type: object
+      required:
+        - outcome
+        - details
+      properties:
+        outcome:
+          type: string
+          enum:
+            - OK
+            - KO
+        details:
+          $ref: '#/components/schemas/PaymentResponseDetails'
+    PaymentResponseDetails:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/OkPaymentResponseDetails'
+        - $ref: '#/components/schemas/KoPaymentResponseDetails'
+      discriminator:
+        propertyName: outcome
+        mapping:
+          OK: '#/components/schemas/OkPaymentResponseDetails'
+          KO: '#/components/schemas/KoPaymentResponseDetails'
+
+
+    OkPaymentResponseDetails:
+      type: object
+      required:
+        - creditorInstitutionFiscalCode
+        - noticeNumber
+        - iuv
+        - amount
+        - transactionId
+      properties:
+        creditorInstitutionFiscalCode:
+          type: string
+          minLength: 11
+          maxLength: 11
+          examples:
+            - '80001230456'
+        noticeNumber:
+          type: string
+          examples:
+            - '302000100000012345'
+          minLength: 18
+          maxLength: 18
+        iuv:
+          type: string
+          examples:
+            - '02000100000012345'
+          minLength: 17
+          maxLength: 17
+        amount:
+          $ref: '#/components/schemas/Amount'
+        transactionId:
+          $ref: '#/components/schemas/TransactionId'
+    KoPaymentResponseDetails:
+      type: object
+    DebtPositionRequest:
+      type: object
+      required:
+        - companyName
+        - iupd
+        - officeName
+        - debtor
+        - paymentOption
+        - switchToExpired
+      properties:
+        companyName:
+          maxLength: 140
+          minLength: 0
+          type: string
+          examples:
+            - "Comune di Fantasia"
+        iupd:
+          type: string
+          examples:
+            - "IUPD-2024-XYZ-001"
+        officeName:
+          maxLength: 140
+          minLength: 0
+          type: string
+          examples:
+            - "Ufficio Anagrafe"
+        switchToExpired:
+          type: boolean
+          default: false
+        debtor:
+          $ref: '#/components/schemas/Debtor'
+        paymentOption:
+          $ref: '#/components/schemas/PaymentOption'
+    PaymentOption:
+      type: object
+      required:
+        - installment
+      properties:
+        installment:
+          $ref: '#/components/schemas/InstallmentDetail'
+    TransferItem:
+      type: object
+      required:
+        - amount
+        - remittanceInformation
+        - iban
+        - category
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        remittanceInformation:
+          maxLength: 140
+          minLength: 0
+          type: string
+          description: remittance information following EACT standard as /RFB/{iuv}/CNR/{userFiscalCode}/TXT/{TransferDescription})
+          examples:
+            - "/RFB/00000000000000000/CNR/AAAAAAAAAAAAAAAA/TXT/The payment description"
+        iban:
+          maxLength: 35
+          minLength: 1
+          pattern: ^[A-Za-z0-9]{1,35}$
+          type: string
+          examples:
+            - "IT0000000000000000000000000"
+        category:
+          type: string
+          description: 'collection services pagoPA taxonomy code'
+          pattern: '(?:6|7|8|9)\/\d{7}(?:IM|TS|SP|SA|AP)\/'
+          maxLength: 12
+          minLength: 12
+    InstallmentDetail:
+      type: object
+      required:
+        - iuv
+        - description
+        - dueDate
+        - transferList
+      properties:
+        transferList:
+          type: array
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/TransferItem'
+        iuv:
+          type: string
+          examples:
+            - '020001000000123456'
+        description:
+          maxLength: 140
+          minLength: 0
+          type: string
+          description: payment description
+          examples:
+            - "Tassa Rifiuti 2024"
+        dueDate:
+          type: string
+          format: date-time
+          examples:
+            - '2024-12-31T23:59:59Z'
+        installmentMetadata:
+          type: object
+          examples:
+            - channel: POS
+    DebtPositionResponse:
+      type: object
+      properties:
+        idDeptPosition:
+          type: string
+          examples:
+            - "GPD-ID-99887766"
+    ActivatePaymentRequest:
+      type: object
+      required:
+        - paymentNotice
+        - sessionId
+      properties:
+        paymentNotice:
+          $ref: '#/components/schemas/PaymentNoticeActivation'
+        sessionId:
+          $ref: '#/components/schemas/SessionId'
+    PaymentNoticeActivation:
+      type: object
+      required:
+        - amount
+        - rptId
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        rptId:
+          $ref: '#/components/schemas/RptId'
+    ActivatePaymentResponse:
+      type: object
+      required:
+        - transactionId
+        - paymentToken
+      properties:
+        transactionId:
+          $ref: '#/components/schemas/TransactionId'
+        paymentToken:
+          $ref: '#/components/schemas/PaymentToken'
+    ProblemJson:
+      description: Body definition for error responses containing failure details
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+          description: |-
+            An absolute URI that identifies the problem type. When dereferenced,
+            it SHOULD provide human-readable documentation for the problem type
+            (e.g., using HTML).
+          default: 'about:blank'
+          examples:
+            - 'https://example.com/problem/constraint-violation'
+        title:
+          type: string
+          description: >-
+            A short, summary of the problem type. Written in english and
+            readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized); example: Service Unavailable
+        status:
+          $ref: '#/components/schemas/HttpStatusCode'
+        detail:
+          type: string
+          description: |-
+            A human readable explanation specific to this occurrence of the
+            problem.
+          examples:
+            - "There was an error processing the request"
+        instance:
+          type: string
+          format: uri
+          description: >-
+            An absolute URI that identifies the specific occurrence of the
+            problem.
+
+            It may or may not yield further information if dereferenced.
+    HttpStatusCode:
+      type: integer
+      format: int32
+      description: |-
+        The HTTP status code generated by the origin server for this occurrence
+        of the problem.
+      minimum: 100
+      exclusiveMaximum: 600
+      examples:
+        - 200
+    PaymentNoticeItem:
+      required:
+        - paymentAmount
+        - primaryCreditorInstitution
+        - transferList
+      type: object
+      properties:
+        paymentAmount:
+          minimum: 1
+          type: integer
+          format: int64
+        primaryCreditorInstitution:
+          type: string
+        transferList:
+          type: array
+          items:
+            "$ref": "#/components/schemas/TransferListItem"
+    TransferListItem:
+      required:
+        - creditorInstitution
+      type: object
+      properties:
+        creditorInstitution:
+          type: string
+        transferCategory:
+          type: string
+        digitalStamp:
+          type: boolean
+    BundleOption:
+      type: object
+      properties:
+        belowThreshold:
+          type: boolean
+          description: if true (the payment amount is lower than the threshold value)
+            the bundles onus is not calculated (always false)
+        bundleOptions:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Transfer"
+    Fee:
+      type: object
+      properties:
+        creditorInstitution:
+          type: string
+        primaryCiIncurredFee:
+          type: integer
+          format: int64
+        actualCiIncurredFee:
+          type: integer
+          format: int64
+    Transfer:
+      required:
+        - fees
+      type: object
+      properties:
+        taxPayerFee:
+          type: integer
+          format: int64
+        actualPayerFee:
+          type: integer
+          format: int64
+        paymentMethod:
+          type: string
+        touchpoint:
+          type: string
+        idBundle:
+          type: string
+        bundleName:
+          type: string
+        bundleDescription:
+          type: string
+        idsCiBundle:
+          type: array
+          items:
+            type: string
+        idPsp:
+          type: string
+        idChannel:
+          type: string
+        idBrokerPsp:
+          type: string
+        onUs:
+          type: boolean
+        abi:
+          type: string
+        pspBusinessName:
+          type: string
+        fees:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Fee"
+    PaymentOptionByPspMulti:
+      required:
+        - paymentNotice
+      type: object
+      properties:
+        bin:
+          type: string
+        paymentMethod:
+          type: string
+        touchpoint:
+          type: string
+        idChannel:
+          type: string
+        idBrokerPsp:
+          type: string
+        paymentNotice:
+          type: array
+          items:
+            "$ref": "#/components/schemas/PaymentNoticeItem"
+    MaxOccurrences:
+      type: integer
+      format: int32
+      default: 10
+      description: max occurrences
+    BooleanFlag:
+      type: boolean
+      default: true
+      description: boolean flag
+  securitySchemes:
+    PagopaInternalApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Ocp-Apim-Subscription-Key
+      description: api key authentication, with subscriptions handled by single products that will release api key to POS gateway components
