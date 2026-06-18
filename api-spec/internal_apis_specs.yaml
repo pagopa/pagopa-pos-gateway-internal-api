@@ -27,7 +27,7 @@ externalDocs:
 security:
   - PagopaInternalApiKeyAuth: []
 paths:
-  /createDebtPosition:
+  /debt-positions:
     post:
       tags:
         - pagopa-internal
