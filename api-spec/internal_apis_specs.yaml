@@ -516,7 +516,33 @@ components:
       type: string
       examples:
         - '99887766554433221100'
-
+    ActivatePaymentInfo:
+      type: object
+      required:
+        - rptId
+        - paymentToken
+        - outcome
+      properties:
+        rptId:
+          $ref: '#/components/schemas/RptId'
+        paymentToken:
+          $ref: '#/components/schemas/PaymentToken'
+        outcome:
+          type: string
+          enum:
+            - OK
+            - KO
+      allOf:
+        - anyOf:
+            - properties:
+                outcome:
+                  enum: [OK]
+            - properties:
+                outcome:
+                  enum: [KO]
+                reason:
+                  type: string
+                  description: "Activation error reason"
     AuthorizationOutcomeResponse:
       type: object
       required:
@@ -1037,8 +1063,10 @@ components:
         - paymentNotice
         - sessionId
       properties:
-        paymentNotice:
-          $ref: '#/components/schemas/PaymentNoticeActivation'
+        paymentNotices:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentNoticeActivation'
         sessionId:
           $ref: '#/components/schemas/SessionId'
     PaymentNoticeActivation:
@@ -1059,8 +1087,10 @@ components:
       properties:
         transactionId:
           $ref: '#/components/schemas/TransactionId'
-        paymentToken:
-          $ref: '#/components/schemas/PaymentToken'
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivatePaymentInfo'
     ProblemJson:
       description: Body definition for error responses containing failure details
       type: object
