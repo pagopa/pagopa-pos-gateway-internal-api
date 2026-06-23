@@ -522,11 +522,14 @@ components:
         - rptId
         - paymentToken
         - outcome
+        - amount
       properties:
         rptId:
           $ref: '#/components/schemas/RptId'
         paymentToken:
           $ref: '#/components/schemas/PaymentToken'
+        amount:
+          $ref: '#/components/schemas/Amount'
         outcome:
           type: string
           enum:
