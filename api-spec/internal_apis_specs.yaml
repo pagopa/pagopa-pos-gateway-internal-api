@@ -1068,6 +1068,7 @@ components:
       properties:
         paymentNotices:
           type: array
+          maxItems: 5
           items:
             $ref: '#/components/schemas/PaymentNoticeActivation'
         sessionId:
@@ -1092,6 +1093,7 @@ components:
           $ref: '#/components/schemas/TransactionId'
         details:
           type: array
+          maxItems: 5
           items:
             $ref: '#/components/schemas/ActivatePaymentInfo'
     ProblemJson:
