@@ -784,14 +784,6 @@ components:
       oneOf:
         - $ref: '#/components/schemas/AuthorizationCallbackDetailsOk'
         - $ref: '#/components/schemas/AuthorizationCallbackDetailsKo'
-      discriminator:
-        propertyName: outcome
-        mapping:
-          AUTHORIZED: '#/components/schemas/AuthorizationCallbackDetailsOk'
-          DECLINED: '#/components/schemas/AuthorizationCallbackDetailsKo'
-          REFUSED: '#/components/schemas/AuthorizationCallbackDetailsKo'
-          CANCELED_BY_USER: '#/components/schemas/AuthorizationCallbackDetailsKo'
-          TIMEOUT: '#/components/schemas/AuthorizationCallbackDetailsKo'
     AuthorizationCallbackDetailsOk:
       type: object
       description: Authorization outcome OK details
@@ -1095,11 +1087,6 @@ components:
       oneOf:
         - $ref: '#/components/schemas/OkPaymentResponseDetails'
         - $ref: '#/components/schemas/KoPaymentResponseDetails'
-      discriminator:
-        propertyName: outcome
-        mapping:
-          OK: '#/components/schemas/OkPaymentResponseDetails'
-          KO: '#/components/schemas/KoPaymentResponseDetails'
 
 
     OkPaymentResponseDetails:
