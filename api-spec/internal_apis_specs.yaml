@@ -27,7 +27,7 @@ externalDocs:
 security:
   - PagopaInternalApiKeyAuth: []
 paths:
-  /debt-positions:
+  /debt-positions/{orgFiscalCode}:
     post:
       tags:
         - pagopa-internal
@@ -38,6 +38,19 @@ paths:
       operationId: createDebtPosition
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
+        - name: orgFiscalCode
+          in: path
+          required: true
+          description: The creditor institution fiscal code
+          schema:
+            type: string
+            examples: [ "77777777777" ]
+        - name: toPublish
+          in: "query"
+          required: false
+          schema:
+            type: boolean
+            default: true
       requestBody:
         required: true
         content:
@@ -59,6 +72,13 @@ paths:
                 $ref: '#/components/schemas/ProblemJson'
         '401':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+              example:
+                status: 401
+                detail: Unauthorized
         '404':
           description: Not found
           content:
@@ -1228,11 +1248,37 @@ components:
             - channel: POS
     DebtPositionResponse:
       type: object
+      required:
+        - creditorInstitutionFiscalCode
+        - noticeNumber
+        - iuv
+        - iupd
       properties:
-        idDeptPosition:
+        creditorInstitutionFiscalCode:
           type: string
           examples:
-            - "GPD-ID-99887766"
+            - "80001230456"
+        noticeNumber:
+          type: string
+          examples:
+            - "302000100000012345"
+        iuv:
+          type: string
+          examples:
+            - "020001000000123456"
+        iupd:
+          type: string
+          examples:
+            - "IUPD-2024-XYZ-001"
+        status:
+          type: string
+          enum:
+            - "DRAFT"
+            - "PUBLISHED"
+            - "VALID"
+            - "UNPAYABLE"
+            - "PARTIALLY_PAID"
+            - "PAID"
     ActivatePaymentRequest:
       type: object
       required:
